@@ -2,11 +2,11 @@ import pygame
 
 pygame.init()
 
-white = (255,255,255)
-black = (125,125,125)
-red = (255,0,0,)
-blue = (0,0,255)
-green = (0,255,0)
+white = pygame.Color(255,255,255)
+black = pygame.Color(0,0,0,125)
+red = pygame.Color(255,0,0,)
+blue = pygame.Color(0,0,255)
+green = pygame.Color(0,255,0)
 
 displayWidth = 640
 displayHeight = 480
@@ -33,11 +33,17 @@ def system2game(i):
 def gameloop():
 	gameExit = False
 	
-	gameDisplay = pygame.display.set_mode((displayWidth,displayHeight), pygame.FULLSCREEN|pygame.SCALED)
+	window = pygame.display.set_mode((displayWidth,displayHeight), pygame.FULLSCREEN|pygame.SCALED)
 	pygame.display.set_caption('Strategy')
 
-	gameDisplay = pygame.display.set_mode((displayWidth,displayHeight), pygame.FULLSCREEN|pygame.SCALED)
-	#I HAVE NO CLUE WHY BUT THE WINDOW DOESN'T DISPLAY UNLESS I DECLARE GAMEDISPLAY TWICE
+	window = pygame.display.set_mode((displayWidth,displayHeight), pygame.FULLSCREEN|pygame.SCALED)
+	#I HAVE NO CLUE WHY BUT THE WINDOW DOESN'T DISPLAY UNLESS I DECLARE window TWICE
+	
+	layer1 = window.convert_alpha()
+	layer1.fill([0,0,0,0])
+	
+	layer2 = window.convert_alpha()
+	layer2.fill([0,0,0,0])
 
 	character1 = [0,0]
 	character2 = [1,1]
@@ -52,7 +58,9 @@ def gameloop():
 			characters.append(i)
 	
 	while not gameExit:
-		gameDisplay.fill(white)
+		window.fill(white)
+		layer1.fill([0,0,0,0])
+		layer2.fill([0,0,0,0])
 		
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -71,13 +79,15 @@ def gameloop():
 		
 		for f in range(int(verticalGridCount/2+1)):
 			for i in range(int(horizontalGridCount/2+1)):
-				pygame.draw.rect(gameDisplay, black, [i * gridSize * 2, f * gridSize * 2,gridSize,gridSize])
-				pygame.draw.rect(gameDisplay, black, [i * gridSize * 2 + gridSize, f * gridSize * 2 + gridSize,gridSize,gridSize])
+				pygame.draw.rect(layer1, black, [i * gridSize * 2, f * gridSize * 2,gridSize,gridSize])
+				pygame.draw.rect(layer1, black, [i * gridSize * 2 + gridSize, f * gridSize * 2 + gridSize,gridSize,gridSize])
 		
-		pygame.draw.rect(gameDisplay, red, [character1[0] * gridSize, character1[1] * gridSize, gridSize, gridSize])
-		pygame.draw.rect(gameDisplay, blue, [character2[0] * gridSize, character2[1] * gridSize, gridSize, gridSize])
-		pygame.draw.rect(gameDisplay, green, [int(game2system(character3[0])), int(game2system(character3[1])), gridSize, gridSize])
+		pygame.draw.rect(layer2, red, [character1[0] * gridSize, character1[1] * gridSize, gridSize, gridSize])
+		pygame.draw.rect(layer2, blue, [character2[0] * gridSize, character2[1] * gridSize, gridSize, gridSize])
+		pygame.draw.rect(layer2, green, [int(game2system(character3[0])), int(game2system(character3[1])), gridSize, gridSize])
 		
+		window.blit(layer1, (0,0))
+		window.blit(layer2, (0,0))
 		pygame.display.update()
 		clock.tick(FPS)
 		
